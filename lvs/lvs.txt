@@ -1,0 +1,123 @@
+2013-5-23  
+lvs负载均衡 配置
+1 root 权限配置
+2 配置静态ip $ sudo vi /etc/network/interfaces(也可以不设)
+3 做法我将一台做lvs 其他2台上装nginx 测试
+
+################################
+开始配置
+1 确认系统已经有ipvs （LVS是在linux操作系统基础上建立虚拟服务器，实现服务节点之间的负载均衡。它是基于linux内核实现的，2.6.X内核默认集成了lvs模块，LVS常用负载均衡的实现是基于ip协议的，所以一般称为IPVS。）
+#命令： 
+modprobe -l | grep ipvs，如果出现：
+kernel/net/netfilter/ipvs/ip_vs.ko
+kernel/net/netfilter/ipvs/ip_vs_rr.ko
+kernel/net/netfilter/ipvs/ip_vs_wrr.ko
+kernel/net/netfilter/ipvs/ip_vs_lc.ko
+kernel/net/netfilter/ipvs/ip_vs_wlc.ko
+kernel/net/netfilter/ipvs/ip_vs_lblc.ko
+kernel/net/netfilter/ipvs/ip_vs_lblcr.ko
+kernel/net/netfilter/ipvs/ip_vs_dh.ko
+kernel/net/netfilter/ipvs/ip_vs_sh.ko
+kernel/net/netfilter/ipvs/ip_vs_sed.ko
+kernel/net/netfilter/ipvs/ip_vs_nq.ko 
+kernel/net/netfilter/ipvs/ip_vs_ftp.ko
+则说明已经有了LVS，就不需要重新编译安装
+
+
+2 安装ipvsadm，直接运行apt-get install ipvsadm命令，安装成功后，运行命令：
+ipvsadm
+会看到提示： 
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+
+3 创建一个虚ip
+接下来就是配置LVS，就是在负载均衡器（192.168.0.111）上建一个虚拟ip，
+然后用ipvsadm建立转发规则：
+ifconfig eth0:0 192.168.0.112 netmask 255.255.255.255 broadcast 192.168.0.112
+echo "1" >/proc/sys/net/ipv4/ip_forward
+ipvsadm -C
+ipvsadm -A -t 192.168.0.112:80 -s rr
+ipvsadm -a -t 192.168.0.112:80 -r 192.168.1.103 -g -w 1
+ipvsadm -a -t 192.168.0.112:80 -r 192.168.1.104 -g -w 1
+192.168.1.103和192.168.1.104分别运行了一个Web服务器，端口都是80
+ipvsadm
+
+如果看到如下信息，则说明配置成功：
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  eric-app-server.local:www rr
+  -> 192.168.1.103:www          Route   1      0          0         
+  -> 192.168.1.104:www          Route   1      0          0 
+
+4真实服务器配置
+那么接下来就需要配置真实服务器192.168.1.103和192.168.1.104，分别在这两个服务器上运行如下命令：
+ifconfig lo:0 192.168.0.112 netmask 255.255.255.255 broadcast 192.168.0.112
+route add default gw 192.168.0.112
+echo "1" > /proc/sys/net/ipv4/conf/lo/arp_ignore
+echo "2" > /proc/sys/net/ipv4/conf/lo/arp_announce
+echo "1" > /proc/sys/net/ipv4/conf/all/arp_ignore
+echo "2" > /proc/sys/net/ipv4/conf/all/arp_announce
+sudo sysctl -p
+
+### 完成 ###
+
+命令选项解释：
+有两种命令选项格式，长的和短的，具有相同的意思。在实际使用时，两种都可以。
+-A --add-service 在内核的虚拟服务器表中添加一条新的虚拟服务器记录。也就是增加一台新的虚拟服务器。
+-E --edit-service 编辑内核虚拟服务器表中的一条虚拟服务器记录。
+-D --delete-service 删除内核虚拟服务器表中的一条虚拟服务器记录。
+-C --clear 清除内核虚拟服务器表中的所有记录。
+-R --restore 恢复虚拟服务器规则
+-S --save 保存虚拟服务器规则，输出为-R 选项可读的格式
+-a --add-server 在内核虚拟服务器表的一条记录里添加一条新的真实服务器记录。也就是在一个虚拟服务器中增加一台新的真实服务器
+-e --edit-server 编辑一条虚拟服务器记录中的某条真实服务器记录
+-d --delete-server 删除一条虚拟服务器记录中的某条真实服务器记录
+-L|-l --list 显示内核虚拟服务器表
+-Z --zero 虚拟服务表计数器清零（清空当前的连接数量等）
+--set tcp tcpfin udp 设置连接超时值
+--start-daemon 启动同步守护进程。他后面可以是master 或backup，用来说明LVS Router 是aster 或是backup。在这个功能上也可以采用keepalived 的VRRP 功能。
+--stop-daemon 停止同步守护进程
+-h --help 显示帮助信息
+
+其他的选项:
+-t --tcp-service service-address 说明虚拟服务器提供的是tcp 的服务[vip:port] or [real-server-ip:port]
+-u --udp-service service-address 说明虚拟服务器提供的是udp 的服务[vip:port] or [real-server-ip:port]
+-f --fwmark-service fwmark 说明是经过iptables 标记过的服务类型。
+-s --scheduler scheduler 使用的调度算法，有这样几个选项rr|wrr|lc|wlc|lblc|lblcr|dh|sh|sed|nq,默认的调度算法是： wlc.
+-p --persistent [timeout] 持久稳固的服务。这个选项的意思是来自同一个客户的多次请求，将被同一台真实的服务器处理。timeout 的默认值为300 秒。
+-M --netmask netmask persistent granularity mask
+-r --real-server server-address 真实的服务器[Real-Server:port]
+-g --gatewaying 指定LVS 的工作模式为直接路由模式（也是LVS 默认的模式）
+-i --ipip 指定LVS 的工作模式为隧道模式
+-m --masquerading 指定LVS 的工作模式为NAT 模式
+-w --weight weight 真实服务器的权值
+--mcast-interface interface 指定组播的同步接口
+-c --connection 显示LVS 目前的连接 如：ipvsadm -L -c
+--timeout 显示tcp tcpfin udp 的timeout 值 如：ipvsadm -L --timeout
+--daemon 显示同步守护进程状态
+--stats 显示统计信息
+--rate 显示速率信息
+--sort 对虚拟服务器和真实服务器排序输出
+--numeric -n 输出IP 地址和端口的数字形式
+
+
+
+
+
+学到的：
+1 linux modprobe 命令 是做什么的？
+-- 查看内核模块 （modprobe -l 列出内核中所有已经或者未挂载的所有模块：-r 移除模块）
+  -a或--all 　载入全部的模块。 
+  -c或--show-conf 　显示所有模块的设置信息。 
+  -d或--debug 　使用排错模式。 
+  -l或--list 　显示可用的模块。 
+  -r或--remove 　模块闲置不用时，即自动卸载模块。 
+  -t或--type 　指定模块类型。 
+  -v或--verbose 　执行时显示详细的信息。 
+  -V或--version 　显示版本信息。 
+  -help 　显示帮助。
+2 netmask  
+
+
