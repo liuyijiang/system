@@ -1,0 +1,2 @@
+需要创建表
+create table hibernate_sequence(next_val int)
