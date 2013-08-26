@@ -1,0 +1,10 @@
+﻿安装
+1解压后
+uname -a           //查看linux内核版本 （TARGET=linux26 对应内核版本）
+make TARGET=linux26 PREFIX=/usr/local/haproxy
+make install PREFIX=/usr/local/haproxy
+(注意 TARGET PREFIX 必须是大写 草~)
+2 配置文件
+
+
+1端口 18080
