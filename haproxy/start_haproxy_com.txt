@@ -1,0 +1,41 @@
+相关启动参数介绍 
+
+   #./haproxy –help //haproxy相关命令参数介绍.
+
+   haproxy  -f  <配置文件> 
+
+[-n 最大并发连接总数] [-N 每个侦听的最大并发数] [-d] [-D] [-q] [-V] [-c] [-p <pid文件>] [-s] [-l] [-dk]
+
+       [-ds] [-de] [-dp] [-db] [-m <内存限制M>] [{-sf|-st} pidlist...]
+
+       -d     前台，debug模式 
+
+       -D     daemon模式启动 
+
+       -q     安静模式,不输出信息
+
+       -V     详细模式
+
+       -c     对配置文件进行语法检查
+
+       -s     显示统计数据
+
+       -l     显示详细统计数据
+
+       -dk    不使用kqueue
+
+       -ds    不使用speculative epoll
+
+       -de    不使用epoll
+
+       -dp    不使用poll
+
+       -db    禁用后台模式，程序跑在前台
+
+       -sf <pidlist>
+
+       程序启动后向pidlist里的进程发送FINISH信号，这个参数放在命令行的最后
+
+       -st <pidlist>
+
+       程序启动后向pidlist里的进程发送TERMINATE信号，这个参数放在命令行的最后

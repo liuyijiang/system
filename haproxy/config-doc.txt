@@ -728,20 +728,19 @@ Examples :
 
 2.9) Setting the cookie name
 ----------------------------
-In HTTP mode, it is possible to look for a particular cookie which will contain
-a server identifier which should handle the connection. The cookie name is set
-via the 'cookie' parameter.
-
+在HTTP方式,可以寻找一个特定的cookie,将包含
+服务器标识符,该标识符应该处理连接。名字是设置cookie
+通过“cookie”参数。
 Example :
 ---------
     listen http_proxy :80
         mode http
         cookie SERVERID
 
-It is possible to change the cookie behaviour to get a smarter persistence,
-depending on applications. It is notably possible to delete or modify a cookie
-emitted by a server, insert a cookie identifying the server in an HTTP response
-and even add a header to tell upstream caches not to cache this response.
+这是有可能改变行为来获得一个cookie持久性更聪明
+这取决于应用程序。这是尤其是可以删除或修改一个cookie
+发出一个服务器,插入一个cookie识别服务器的HTTP响应
+甚至添加一个标题告诉上游缓存不缓存此响应。
 
 Examples :
 ----------
