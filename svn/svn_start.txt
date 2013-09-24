@@ -1,0 +1,33 @@
+1ubuntu系统搭建svn环境
+#################################
+1 使用root权限 安装   apt-get install subversion
+2 新建存储仓库    svnadmin create /home/svn
+3 赋予/home/svn文件夹完全读写权限    sudo chmod -R 777 */*
+4 配置文件
+首先是/home/svn/conf
+修改：
+anon-access = read
+auth-access = write
+password-db = passwd
+anon-access 和 auth-access 分别指定匿名和有权限用户的权限，默认给匿名用户只读的权限，如果想拒绝匿名用户的访问，只需把 read 改成 none 就能达到目的。password-db 后的 passwd 则为定义用户名及密码的文件路径。这个文件默认跟 snvserve.conf 在同一个目录。
+记住，去掉上述每一句前面的 # ，并且让其顶格
+
+然后是在pwd文件中添加
+svnuser = password
+ly = 123456
+### 格式为 用户名 = 密码
+
+然后是配置authz，配置信息如下：
+[groups]
+# harry_and_sally = harry,sally
+# harry_sally_and_joe = harry,sally,&joe
+group_admin = ly
+
+# [/foo/bar]
+# harry = rw
+# &joe = r
+# * =
+
+[/] 
+ly = rw
+* =  
