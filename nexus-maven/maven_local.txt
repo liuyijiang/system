@@ -1,0 +1,16 @@
+mvn install:install-file -Dfile=IKAnalyzer3.2.8.jar -DgroupId=org.wltea.ik-analyzer -DartifactId=ik-analyzer -Dversion=3.2.8 -Dpackaging=jar
+
+这样你就可以将IKAnalyzer3.2.8.jar安装到您Maven本地的库文件夹相应目录中。你可以根据你需要安装包的实际情况修改上面的几个参数的设定值即可。之后你可以在pom.xml文件中通过以下依赖在项目中引入上述的包，如下：
+<dependency>
+     <groupId>org.wltea.ik-analyzer</groupId>
+     <artifactId>ik-analyzer</artifactId>
+     <version>3.2.8</version>
+ </dependency>
+
+当然你也可以不将IKAnalyzer3.2.8.jar发布到您本地的Maven库中，而是通过下面配置引入，效果和上面的差不多：
+<dependency>
+    <groupId>org.wltea</groupId>
+    <artifactId>IKAnalyzer</artifactId>
+    <version>3.2.8</version>
+    <systemPath>C:\Users\yangping\Desktop\a\IKAnalyzer3.2.8.jar</systemPath>
+</dependency>
