@@ -9,8 +9,9 @@ mvn install:install-file -Dfile=IKAnalyzer3.2.8.jar -DgroupId=org.wltea.ik-analy
 
 当然你也可以不将IKAnalyzer3.2.8.jar发布到您本地的Maven库中，而是通过下面配置引入，效果和上面的差不多：
 <dependency>
-    <groupId>org.wltea</groupId>
-    <artifactId>IKAnalyzer</artifactId>
-    <version>3.2.8</version>
-    <systemPath>C:\Users\yangping\Desktop\a\IKAnalyzer3.2.8.jar</systemPath>
-</dependency>
+	    <groupId>com.actviemq</groupId>
+	    <artifactId>actviemq-all</artifactId>
+	    <version>5.7.0</version>
+	    <scope>system</scope>
+	    <systemPath>E:\\somejar\\activemq\\activemq-all-5.7.0.jar</systemPath>
+    </dependency>
