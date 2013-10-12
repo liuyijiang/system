@@ -1,0 +1,21 @@
+1## 下载hbase
+
+2## tar zxvf 解压后
+配置文件在conf/hbase-site.xml 
+
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <name>hbase.rootdir</name>
+    <value>file:///DIRECTORY/hbase</value>
+  </property>
+</configuration>
+将 DIRECTORY 替换成你期望写文件的目录. 默认 hbase.rootdir 是指向 /tmp/hbase-${user.name} ，也就说你会在重启后丢失数据(重启的时候操作系统会清理/tmp目录)
+
+3## 启动HBase:
+$ ./bin/start-hbase.sh
+starting Master, logging to logs/hbase-user-master-example.org.out
+
+####################################################3
+hbase shell
