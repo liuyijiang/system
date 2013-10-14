@@ -1,9 +1,10 @@
-使用nexus搭建 maven私服
-1 下载nexus.xxxx.war
+浣跨敤nexus鎼缓 maven绉佹湇
+1 涓嬭浇nexus.xxxx.war
 http://www.sonatype.org/nexus/archived
-war 放入tomcat 启动即可
+war 鏀惧叆tomcat 鍚姩鍗冲彲
 
-2 配置nexus 
+2 閰嶇疆nexus 
+  鍒濆瀵嗙爜鏄痑dmin/admin123
 
-3 配置maven setting.mxl
-  修改eclipse中setting.mxl位置
+3 閰嶇疆maven setting.mxl
+  淇敼eclipse涓璼etting.mxl浣嶇疆
