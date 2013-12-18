@@ -1,0 +1,26 @@
+  ubuntu 安装 keepalived
+  下载http://www.keepalived.org/
+  解压后
+  ./config --prefix=
+ ------------------------- 
+如果有一下错误
+ 提示：
+  checking for openssl/ssl.h... no
+  configure: error:
+  !!! OpenSSL is not properly installed on your system. !!!
+  !!! Can not include OpenSSL headers files.            !!!
+
+安装libssl.dev
+  apt-get install libssl.dev 
+
+ 提示：
+  checking for poptGetContext in -lpopt... no
+  configure: error: Popt libraries is required
+
+安装libpopt-dev
+  apt-get install libpopt-dev   
+
+----------------------------
+需要在etc下面建立一个keepalived文件夹 编辑keepalived.conf
+  mkdir /etc/keepalived/
+  vi /etc/keepalived/keepalived.conf 
